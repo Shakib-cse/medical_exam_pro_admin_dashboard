@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --navy: #072438;
+  --navy-card: #124168;
+  --brand-orange: #FF6B00;
+  --brand-blue: #1D82EB;
+  --accent-blue: #EBF5FE;
+  --accent-blue-border: #BAE6FD;
+  --success: #10B981;
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
