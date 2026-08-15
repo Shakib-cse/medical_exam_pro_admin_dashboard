@@ -6,6 +6,7 @@ import {
   Trash2,
   Edit3,
   HelpCircle,
+  Clock,
   CheckCircle2,
   X,
   Sparkles,
@@ -41,10 +42,8 @@ export default function AdminQuestionBankPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [specialty, setSpecialty] = useState("Cardiology");
-  const [category, setCategory] = useState("Clinical Practice");
   const [type, setType] = useState<"Clinical" | "SJT">("Clinical");
-  const [difficultyBadge, setDifficultyBadge] = useState("MODERATE");
-  const [difficultyType, setDifficultyType] = useState<"moderate" | "advanced" | "clinical" | "standard">("moderate");
+  const [durationMinutes, setDurationMinutes] = useState(45);
   const [questions, setQuestions] = useState<BankQuestionInput[]>([{ ...emptyQuestion }]);
 
   const fetchQuestionBanks = async () => {
@@ -76,10 +75,8 @@ export default function AdminQuestionBankPage() {
     setTitle("");
     setDescription("");
     setSpecialty("Cardiology");
-    setCategory("Clinical Practice");
     setType("Clinical");
-    setDifficultyBadge("MODERATE");
-    setDifficultyType("moderate");
+    setDurationMinutes(45);
     setQuestions([
       {
         questionText: "A 45-year-old male presents with acute chest pain...",
@@ -99,10 +96,8 @@ export default function AdminQuestionBankPage() {
       setTitle(bank.title);
       setDescription(bank.description || "");
       setSpecialty(bank.specialty || "General Medicine");
-      setCategory(bank.category || "Clinical Practice");
       setType((bank.type as any) || "Clinical");
-      setDifficultyBadge(bank.difficultyBadge || "MODERATE");
-      setDifficultyType(bank.difficultyType || "moderate");
+      setDurationMinutes(bank.durationMinutes || Math.max(1, Math.ceil((bank.questionCount || 1) * 1.5)));
 
       const res = await adminQuestionBankApi.getQuestionBankById(bank.id);
       if (res?.data?.questions && Array.isArray(res.data.questions) && res.data.questions.length > 0) {
@@ -182,10 +177,11 @@ export default function AdminQuestionBankPage() {
         title,
         description,
         specialty,
-        category,
+        category: specialty || "Clinical Practice",
         type,
-        difficultyBadge,
-        difficultyType,
+        difficultyBadge: "MODERATE",
+        difficultyType: "moderate",
+        durationMinutes: Number(durationMinutes),
         questions: questions.filter((q) => q.questionText.trim().length > 0),
       };
 
@@ -299,8 +295,8 @@ export default function AdminQuestionBankPage() {
               <tr className="border-b border-slate-100 bg-slate-50/40 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                 <th className="py-3.5 px-6">MODULE TITLE</th>
                 <th className="py-3.5 px-6">TYPE</th>
-                <th className="py-3.5 px-6">SPECIALTY / CATEGORY</th>
-                <th className="py-3.5 px-6">DIFFICULTY</th>
+                <th className="py-3.5 px-6">SPECIALTY</th>
+                <th className="py-3.5 px-6">DURATION</th>
                 <th className="py-3.5 px-6">QUESTIONS</th>
                 <th className="py-3.5 px-6 text-right">ACTIONS</th>
               </tr>
@@ -333,25 +329,13 @@ export default function AdminQuestionBankPage() {
                       </span>
                     </td>
                     <td className="py-4 px-6 font-semibold text-slate-600">
-                      <div className="space-y-0.5">
-                        <span className="font-bold text-slate-800 block text-xs">{bank.specialty}</span>
-                        <span className="text-[10px] text-slate-400">{bank.category}</span>
-                      </div>
+                      <span className="font-bold text-slate-800 block text-xs">{bank.specialty}</span>
                     </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-sm tracking-wider ${
-                          bank.difficultyType === "advanced"
-                            ? "bg-rose-100 text-rose-700"
-                            : bank.difficultyType === "clinical"
-                            ? "bg-sky-100 text-sky-700"
-                            : bank.difficultyType === "standard"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-orange-100 text-orange-700"
-                        }`}
-                      >
-                        {bank.difficultyBadge || "MODERATE"}
-                      </span>
+                    <td className="py-4 px-6 font-medium text-slate-600">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{bank.durationMinutes || Math.max(1, Math.ceil((bank.questionCount || 0) * 1.5))} mins</span>
+                      </div>
                     </td>
                     <td className="py-4 px-6 font-bold text-slate-800">
                       <div className="flex items-center gap-1">
@@ -433,17 +417,18 @@ export default function AdminQuestionBankPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700">Category</label>
+                  <label className="font-bold text-slate-700">Time Duration (Minutes)</label>
                   <input
-                    type="text"
-                    placeholder="e.g. Clinical Practice, Professionalism, Guidelines"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    type="number"
+                    min={1}
+                    max={300}
+                    value={durationMinutes}
+                    onChange={(e) => setDurationMinutes(Number(e.target.value))}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium"
                   />
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 sm:col-span-2">
                   <label className="font-bold text-slate-700">Exam Type</label>
                   <select
                     value={type}
@@ -453,17 +438,6 @@ export default function AdminQuestionBankPage() {
                     <option value="Clinical">Clinical</option>
                     <option value="SJT">SJT (Situational Judgement)</option>
                   </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-slate-700">Difficulty Badge</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. MODERATE, ADVANCED, CLINICAL"
-                    value={difficultyBadge}
-                    onChange={(e) => setDifficultyBadge(e.target.value.toUpperCase())}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium"
-                  />
                 </div>
 
                 <div className="space-y-1.5 sm:col-span-2">

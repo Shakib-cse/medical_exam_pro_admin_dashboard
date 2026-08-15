@@ -15,8 +15,9 @@ export interface QuestionBankInput {
   specialty?: string;
   category?: string;
   type?: string; // "Clinical" | "SJT"
-  difficultyBadge: string;
-  difficultyType: "moderate" | "advanced" | "clinical" | "standard";
+  difficultyBadge?: string;
+  difficultyType?: "moderate" | "advanced" | "clinical" | "standard";
+  durationMinutes?: number;
   questions?: BankQuestionInput[];
 }
 
@@ -29,6 +30,7 @@ export interface AdminQuestionBankData {
   type: string;
   difficultyBadge: string;
   difficultyType: "moderate" | "advanced" | "clinical" | "standard";
+  durationMinutes?: number;
   questionCount: number;
   questions?: BankQuestionInput[];
   avgAcc?: string;
