@@ -29,8 +29,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
       title: "CONTENT MANAGEMENT",
       items: [
         { label: "Overview", href: "/dashboard/overview-control", icon: Eye },
-        { label: "Mock Exams", href: "/dashboard/mock-exams", icon: FileCheck2 },
         { label: "Question Bank", href: "/dashboard/question-bank", icon: HelpCircle },
+        { label: "Mock Exams", href: "/dashboard/mock-exams", icon: FileCheck2 },
       ],
     },
     {

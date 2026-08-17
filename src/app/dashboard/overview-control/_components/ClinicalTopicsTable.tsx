@@ -43,7 +43,6 @@ export function ClinicalTopicsTable({
             <tr className="border-b border-slate-100 bg-slate-50/40 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
               <th className="py-3.5 px-6">IMAGE & TITLE</th>
               <th className="py-3.5 px-6">TIME LIMIT</th>
-              <th className="py-3.5 px-6">QUESTIONS COUNT</th>
               <th className="py-3.5 px-6">PRACTICE SET STATUS</th>
               <th className="py-3.5 px-6 text-right">ACTIONS</th>
             </tr>
@@ -51,7 +50,7 @@ export function ClinicalTopicsTable({
           <tbody className="divide-y divide-slate-100">
             {clinicalTopics.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-slate-400 font-medium">
+                <td colSpan={4} className="py-8 text-center text-slate-400 font-medium">
                   No clinical problem solving topics created yet. Click "Create New Clinical Topic" above to add your first card.
                 </td>
               </tr>
@@ -83,11 +82,6 @@ export function ClinicalTopicsTable({
                       <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[10px]">
                         {topic.durationMinutes || 45} Mins
                       </span>
-                    </td>
-
-                    {/* Questions Count */}
-                    <td className="py-4 px-6 font-bold text-slate-800">
-                      {topic.totalQ || 100} Questions
                     </td>
 
                     {/* Practice Set Status */}
