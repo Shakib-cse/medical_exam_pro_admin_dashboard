@@ -32,6 +32,11 @@ export interface AdminQuestionBankData {
   difficultyType: "moderate" | "advanced" | "clinical" | "standard";
   durationMinutes?: number;
   questionCount: number;
+  sbaCount?: number;
+  emqCount?: number;
+  emqThemesCount?: number;
+  rankingCount?: number;
+  select3Count?: number;
   questions?: BankQuestionInput[];
   avgAcc?: string;
   createdAt?: string;

@@ -4,13 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   FileCheck2,
-  HelpCircle,
   Users,
   Settings,
   Menu,
   X,
   ShieldCheck,
-  Eye,
+  LayoutDashboard,
+  Flag,
+  LifeBuoy,
+  Stethoscope,
+  Scale,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -20,22 +23,57 @@ interface AdminSidebarProps {
   className?: string;
 }
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: any;
+  badge?: string;
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
 export function AdminSidebar({ className }: AdminSidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navSections = [
+  const navSections: NavSection[] = [
     {
-      title: "CONTENT MANAGEMENT",
+      title: "GENERAL",
       items: [
-        { label: "Overview", href: "/dashboard/overview-control", icon: Eye },
-        { label: "Question Bank", href: "/dashboard/question-bank", icon: HelpCircle },
+        { label: "Overview", href: "/dashboard/overview-control", icon: LayoutDashboard },
+      ],
+    },
+    {
+      title: "QUESTION BANKS",
+      items: [
+        {
+          label: "Clinical Problem Solving",
+          href: "/dashboard/clinical-problem-solving",
+          icon: Stethoscope,
+          badge: "CPS",
+        },
+        {
+          label: "Professional Dilemmas",
+          href: "/dashboard/professional-dilemmas",
+          icon: Scale,
+          badge: "PD",
+        },
+      ],
+    },
+    {
+      title: "ASSESSMENTS & AUDIT",
+      items: [
         { label: "Mock Exams", href: "/dashboard/mock-exams", icon: FileCheck2 },
+        { label: "Reports & Flags", href: "/dashboard/reports", icon: Flag },
       ],
     },
     {
       title: "ADMINISTRATION",
       items: [
+        { label: "Support Tickets", href: "/dashboard/support", icon: LifeBuoy },
         { label: "User Management", href: "/dashboard/users", icon: Users },
         { label: "Platform Settings", href: "/dashboard/settings", icon: Settings },
       ],
@@ -106,20 +144,34 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
                       className={cn(
-                        "flex items-center gap-3.5 px-3.5 py-2.5 rounded-lg text-[14px] transition-all duration-150",
+                        "flex items-center justify-between px-3.5 py-2.5 rounded-lg text-[13.5px] transition-all duration-150 group",
                         isActive
                           ? "bg-[#184877] text-white font-semibold shadow-xs"
                           : "text-[#97afc7] hover:text-white hover:bg-white/[0.04] font-medium"
                       )}
                     >
-                      <Icon
-                        className={cn(
-                          "w-5 h-5 shrink-0 transition-colors",
-                          isActive ? "text-white" : "text-[#97afc7]"
-                        )}
-                        strokeWidth={1.8}
-                      />
-                      <span>{item.label}</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Icon
+                          className={cn(
+                            "w-4.5 h-4.5 shrink-0 transition-colors",
+                            isActive ? "text-white" : "text-[#97afc7] group-hover:text-white"
+                          )}
+                          strokeWidth={1.8}
+                        />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                      {item.badge && (
+                        <span
+                          className={cn(
+                            "text-[10px] font-black px-1.5 py-0.5 rounded tracking-wide shrink-0",
+                            isActive
+                              ? "bg-white/20 text-white"
+                              : "bg-[#152e4a] text-[#86a8c9] border border-[#1d4168]"
+                          )}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
