@@ -33,6 +33,7 @@ export default function AdminSupportPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "in_progress" | "resolved">("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [deleteConfirmTicket, setDeleteConfirmTicket] = useState<SupportTicket | null>(null);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -74,9 +75,6 @@ export default function AdminSupportPage() {
   };
 
   const handleDeleteTicket = async (id: string) => {
-    if (typeof window !== "undefined" && !window.confirm("Are you sure you want to delete this support inquiry?")) {
-      return;
-    }
     const previous = [...tickets];
     const updated = tickets.filter((t) => t.id !== id);
     setTickets(updated);
@@ -304,7 +302,7 @@ export default function AdminSupportPage() {
 
                     <button
                       type="button"
-                      onClick={() => handleDeleteTicket(ticket.id)}
+                      onClick={() => setDeleteConfirmTicket(ticket)}
                       title="Delete Ticket"
                       className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                     >
@@ -398,6 +396,42 @@ export default function AdminSupportPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Delete Ticket Confirmation Modal */}
+      {deleteConfirmTicket && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">Delete Support Inquiry?</h3>
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+              Are you sure you want to delete ticket from{" "}
+              <strong className="text-slate-800">{deleteConfirmTicket.userName || deleteConfirmTicket.email}</strong>?
+            </p>
+            <div className="flex items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmTicket(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const target = deleteConfirmTicket;
+                  setDeleteConfirmTicket(null);
+                  await handleDeleteTicket(target.id);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              >
+                <span>Yes, Delete Ticket</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

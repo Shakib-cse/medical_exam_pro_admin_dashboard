@@ -166,6 +166,8 @@ export default function AdminReportsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "reviewed" | "resolved">("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [deleteConfirmReport, setDeleteConfirmReport] = useState<QuestionReport | null>(null);
+  const [deleteConfirmFlagId, setDeleteConfirmFlagId] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -249,9 +251,6 @@ export default function AdminReportsPage() {
   };
 
   const handleDeleteReport = async (id: string) => {
-    if (typeof window !== "undefined" && !window.confirm("Are you sure you want to delete this report?")) {
-      return;
-    }
     const previous = [...reports];
     const updated = reports.filter((r) => r.id !== id);
     setReports(updated);
@@ -268,9 +267,6 @@ export default function AdminReportsPage() {
   };
 
   const handleDeleteFlag = async (id: string) => {
-    if (typeof window !== "undefined" && !window.confirm("Are you sure you want to remove this bookmark?")) {
-      return;
-    }
     const previous = [...flags];
     const updated = flags.filter((f) => f.id !== id);
     setFlags(updated);
@@ -551,7 +547,7 @@ export default function AdminReportsPage() {
 
                       <button
                         type="button"
-                        onClick={() => handleDeleteReport(report.id)}
+                        onClick={() => setDeleteConfirmReport(report)}
                         title="Delete Report"
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                       >
@@ -672,7 +668,7 @@ export default function AdminReportsPage() {
                     </span>
                     <button
                       type="button"
-                      onClick={() => handleDeleteFlag(item.id)}
+                      onClick={() => setDeleteConfirmFlagId(item.id)}
                       title="Remove Bookmark"
                       className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                     >
@@ -684,6 +680,77 @@ export default function AdminReportsPage() {
             })}
           </div>
         )
+      )}
+
+      {/* Delete Report Confirmation Modal */}
+      {deleteConfirmReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">Delete Question Report?</h3>
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+              Are you sure you want to permanently delete the report for{" "}
+              <strong className="text-slate-800">{deleteConfirmReport.questionNumber}</strong>?
+            </p>
+            <div className="flex items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmReport(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const target = deleteConfirmReport;
+                  setDeleteConfirmReport(null);
+                  await handleDeleteReport(target.id);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              >
+                <span>Yes, Delete Report</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Bookmark Confirmation Modal */}
+      {deleteConfirmFlagId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">Remove Bookmark?</h3>
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+              Are you sure you want to remove this question bookmark?
+            </p>
+            <div className="flex items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmFlagId(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const targetId = deleteConfirmFlagId;
+                  setDeleteConfirmFlagId(null);
+                  await handleDeleteFlag(targetId);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              >
+                <span>Yes, Remove</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

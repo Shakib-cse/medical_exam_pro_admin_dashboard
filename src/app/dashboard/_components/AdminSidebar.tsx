@@ -15,6 +15,7 @@ import {
   Stethoscope,
   Scale,
   Ticket,
+  UserCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
     {
       title: "ADMINISTRATION",
       items: [
+        { label: "Pre-Registrations", href: "/dashboard/pre-registrations", icon: UserCheck, badge: "Early Bird" },
         { label: "Coupons & Discounts", href: "/dashboard/coupons", icon: Ticket },
         { label: "Support Tickets", href: "/dashboard/support", icon: LifeBuoy },
         { label: "User Management", href: "/dashboard/users", icon: Users },

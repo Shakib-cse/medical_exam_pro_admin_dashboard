@@ -17,6 +17,9 @@ export interface AdminUserData {
   targetExam?: string;
   bio?: string;
   role?: UserRole;
+  isPreRegistered?: boolean;
+  preRegQueueNumber?: number | null;
+  preRegDiscountEligible?: boolean;
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;

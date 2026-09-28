@@ -275,7 +275,14 @@ export default function UserManagementPage() {
                             {user.firstName ? user.firstName[0].toUpperCase() : "U"}
                           </div>
                           <div>
-                            <div>{user.firstName} {user.lastName}</div>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span>{user.firstName} {user.lastName}</span>
+                              {user.isPreRegistered && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                                  Spot #{user.preRegQueueNumber} (50% Off)
+                                </span>
+                              )}
+                            </div>
                             {user.targetExam && (
                               <span className="text-[10px] text-slate-400 font-normal">
                                 Target: {user.targetExam}
