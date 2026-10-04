@@ -1,6 +1,6 @@
 {
-  "name": "mesaquecerto-frontend",
-  "version": "0.1.0",
+  "name": "medical-exam-pro-admin",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
